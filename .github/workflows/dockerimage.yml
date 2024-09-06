@@ -13,8 +13,7 @@ on:
       - '!README.md'
 
 env:
-  SE_VERSION: 4.43
-  SE_REVISION: 9799
+  SE_VERSION: 5.02.5185
 
 jobs:
 
@@ -23,23 +22,23 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        tag: [alpine, debian, ubuntu, opensuse]
+        tag: [alpine]
     steps:
     - 
       name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - 
       name: Set up QEMU 
-      uses: docker/setup-qemu-action@v2
+      uses: docker/setup-qemu-action@v3
       with:
         platforms: linux/amd64,linux/arm64,linux/arm/v7
     - 
       name: Set up Docker Buildx
       id: buildx
-      uses: docker/setup-buildx-action@v2
+      uses: docker/setup-buildx-action@v3
     - 
       name: Build Docker image for testing
-      uses: docker/build-push-action@v3
+      uses: docker/build-push-action@v6
       with:
         context: .
         file: Dockerfile.${{ matrix.tag }}
@@ -55,7 +54,7 @@ jobs:
     - 
       name: Login to Docker Hub
       if: github.event_name != 'pull_request'
-      uses: docker/login-action@v2
+      uses: docker/login-action@v3
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -66,20 +65,16 @@ jobs:
       with:
         images: siomiz/softethervpn
         tags: |
-          type=raw,value=${{ matrix.tag }}
           type=raw,value=${{ env.SE_VERSION }}-${{ matrix.tag }}
-          type=raw,value=${{ env.SE_REVISION }}-${{ matrix.tag }}
-          type=raw,value=latest,enable=${{ matrix.tag == 'alpine' }}
           type=raw,value=${{ env.SE_VERSION }},enable=${{ matrix.tag == 'alpine' }}
-          type=raw,value=${{ env.SE_REVISION }},enable=${{ matrix.tag == 'alpine' }}
     - 
       name: Buildx and push Docker image
-      uses: docker/build-push-action@v3
+      uses: docker/build-push-action@v6
       with:
         builder: ${{ steps.buildx.outputs.name }}
         context: .
         file: Dockerfile.${{ matrix.tag }}
-        platforms: linux/amd64,linux/arm64,linux/arm/v7
+        platforms: linux/amd64
         push: ${{ github.event_name != 'pull_request' }}
         tags: ${{ steps.meta.outputs.tags }}
 
