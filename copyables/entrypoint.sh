@@ -66,7 +66,7 @@ ${VPNSERVER} start 2>&1 > /dev/null
 # switch cipher
 while : ; do
   set +e
-  vpncmd_server ServerCipherSet DHE-RSA-AES256-SHA 2>&1 > /dev/null
+  vpncmd_server ServerCipherSet ECDHE-RSA-AES256-SHA384 2>&1 > /dev/null
   [[ $? -eq 0 ]] && break
   set -e
   sleep 1
@@ -77,7 +77,7 @@ done
 vpncmd_server About | head -3 | tail -1 | sed 's/^/# /;'
 
 # enable L2TP_IPsec
-vpncmd_server IPsecEnable /L2TP:yes /L2TPRAW:yes /ETHERIP:no /PSK:${PSK} /DEFAULTHUB:DEFAULT
+# vpncmd_server IPsecEnable /L2TP:yes /L2TPRAW:yes /ETHERIP:no /PSK:${PSK} /DEFAULTHUB:DEFAULT
 
 # enable SecureNAT
 vpncmd_hub SecureNatEnable
@@ -89,8 +89,8 @@ vpncmd_hub NatSet /MTU:$MTU /LOG:no /TCPTIMEOUT:3600 /UDPTIMEOUT:1800
 # enable OpenVPN
 # vpncmd_server OpenVpnEnable yes /PORTS:1194
 # new command for 5 via https://github.com/SoftEtherVPN/SoftEtherVPN/discussions/1882
-vpncmd_server ProtoOptionsSet OpenVPN /NAME:Enabled /VALUE:True
-vpncmd_server PortsUDPSet 1194
+# vpncmd_server ProtoOptionsSet OpenVPN /NAME:Enabled /VALUE:True
+#vpncmd_server PortsUDPSet 1194
 
 # set server certificate & key
 if [[ -f server.crt && -f server.key ]]; then
