@@ -62,6 +62,6 @@ VOLUME ["/usr/vpnserver/server_log/", "/usr/vpnserver/packet_log/", "/usr/vpnser
 
 ENTRYPOINT ["/entrypoint.sh"]
 
-EXPOSE 500/udp 4500/udp 1701/tcp 1194/udp 5555/tcp 443/tcp
+# EXPOSE 500/udp 4500/udp 1701/tcp 1194/udp 5555/tcp 443/tcp
 
 CMD ["/usr/local/bin/vpnserver", "execsvc"]
